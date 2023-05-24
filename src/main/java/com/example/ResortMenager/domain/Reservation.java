@@ -54,21 +54,27 @@ public class Reservation {
     private LocalDateTime departureDate;
     @ManyToOne(
             cascade = {CascadeType.PERSIST, CascadeType.REMOVE},
-            fetch = FetchType.LAZY
+            fetch = FetchType.EAGER
     )
     @JoinColumn(
             name = "guest_id",
             updatable = false,
             referencedColumnName = "id",
             nullable = false,
-            foreignKey = @ForeignKey( name = "guest_id_fk")
+            foreignKey = @ForeignKey( name = "reservation_guest_id_fk")
     )
     private Guest guest;
-    @ManyToMany(
-            cascade = {CascadeType.PERSIST, CascadeType.REMOVE},
-            mappedBy = "reservations"
-    )
-    private List<Place> places = new ArrayList<>();
+//    @ManyToMany(
+//            cascade = {CascadeType.PERSIST, CascadeType.REMOVE},
+//            mappedBy = "reservations",
+//            fetch = FetchType.LAZY
+//    )
+//    private List<Place> places = new ArrayList<>();
+//    @OneToMany(
+//            cascade = {CascadeType.PERSIST, CascadeType.REMOVE},
+//            mappedBy = "reservation"
+//    )
+//    private List<AcitivitiesCard> acitivitiesCards = new ArrayList<>();
     public Reservation(Integer numberOfAdults, Integer numberOfKids, LocalDateTime arrivalDate, LocalDateTime departureDate) {
         this.numberOfAdults = numberOfAdults;
         this.numberOfKids = numberOfKids;
@@ -86,16 +92,25 @@ public class Reservation {
     }
     public void setGuest(Guest guest){
         this.guest = guest;
-        guest.addReservation(this);
+//        guest.addReservation(this);
     }
-    public void addPlace(Place place){
-        if(!places.contains(place)){
-            places.add(place);
-            place.addReservation(this);
-        }
-    }
-    public void removePlace(Place place){
-        places.remove(place);
-        place.getReservations().remove(this);
-    }
+//    public void addPlace(Place place){
+//        if(!places.contains(place)){
+//            places.add(place);
+//            place.addReservation(this);
+//        }
+//    }
+//    public void removePlace(Place place){
+//        places.remove(place);
+//        place.getReservations().remove(this);
+//    }
+//    public void addActivitesCard(AcitivitiesCard acitivitiesCard){
+//        if(!acitivitiesCards.contains(acitivitiesCard)){
+//            acitivitiesCards.add(acitivitiesCard);
+//            acitivitiesCard.setReservation(this);
+//        }
+//    }
+//    public void removeActivitesCard(AcitivitiesCard acitivitiesCard){
+//            acitivitiesCards.remove(acitivitiesCard);
+//    }
 }

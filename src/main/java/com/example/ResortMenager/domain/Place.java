@@ -80,7 +80,11 @@ public class Place {
             )
     )
     private List<Reservation> reservations= new ArrayList<>();
-
+//    @OneToMany(
+//            cascade = {CascadeType.PERSIST, CascadeType.REMOVE},
+//            mappedBy = "place"
+//    )
+//    private List<AcitivitiesCard> acitivitiesCards = new ArrayList<>();
     public Place(String name, String city, String postalCode, String street, String number, Integer maxGuestsNumber) {
         this.name = name;
         this.city = city;
@@ -107,4 +111,13 @@ public class Place {
             reservations.add(reservation);
         }
     }
+//    public void addActivitesCard(AcitivitiesCard acitivitiesCard){
+//        if(!acitivitiesCards.contains(acitivitiesCard)){
+//            acitivitiesCards.add(acitivitiesCard);
+//            acitivitiesCard.setPlace(this);
+//        }
+//    }
+//    public void removeActivitesCard(AcitivitiesCard acitivitiesCard){
+//        acitivitiesCards.remove(acitivitiesCard);
+//    }
 }

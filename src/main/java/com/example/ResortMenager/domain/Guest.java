@@ -48,12 +48,13 @@ public class Guest {
             columnDefinition = "TEXT"
     )
     private String email;
-    @OneToMany(
-            orphanRemoval = true,
-            mappedBy = "guest",
-            cascade = {CascadeType.PERSIST, CascadeType.REMOVE}
-    )
-    private List<Reservation> reservations = new ArrayList<>();
+//    @OneToMany(
+//            orphanRemoval = true,
+//            mappedBy = "guest",
+//            cascade = {CascadeType.PERSIST, CascadeType.REMOVE},
+//            fetch = FetchType.LAZY
+//    )
+//    private List<Reservation> reservations = new ArrayList<>();
 
     public Guest(String name, String surrname, String email) {
         this.name = name;
@@ -69,9 +70,9 @@ public class Guest {
                 '}';
     }
 
-    public void addReservation(Reservation reservation){
-        if(!this.reservations.contains(reservation)){
-            this.reservations.add(reservation);
-        }
-    }
+//    public void addReservation(Reservation reservation){
+//        if(!this.reservations.contains(reservation)){
+//            this.reservations.add(reservation);
+//        }
+//    }
 }
