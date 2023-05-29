@@ -1,10 +1,13 @@
 package com.example.ResortMenager.domain;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,60 +34,53 @@ public class Place {
     private Long id;
     @Column(
             name = "name",
-            nullable = false,
-            columnDefinition = "TEXT"
+//            nullable = false,
+            columnDefinition = "TEXT",
+            updatable = false
     )
     private String name;
     @Column(
             name = "city",
-            nullable = false,
+//            nullable = false,
             columnDefinition = "TEXT"
     )
     private String city;
     @Column(
             name = "postal_code",
-            nullable = false,
+//            nullable = false,
             columnDefinition = "TEXT"
     )
     private String postalCode;
     @Column(
             name = "street",
-            nullable = false,
+//            nullable = false,
             columnDefinition = "TEXT"
     )
     private String street;
     @Column(
             name = "number",
-            nullable = false,
+//            nullable = false,
             columnDefinition = "TEXT"
     )
     private String number;
     @Column(
             name = "max_guests_number",
-            nullable = false,
+//            nullable = false,
             columnDefinition = "TEXT"
     )
     private Integer maxGuestsNumber;
-    @ManyToMany(
-            cascade = {CascadeType.PERSIST, CascadeType.REMOVE}
+    @JsonManagedReference
+    @OneToMany(
+            cascade = {CascadeType.PERSIST, CascadeType.REMOVE},
+            mappedBy = "place"
     )
-    @JoinTable(
-            name = "place_booking",
-            joinColumns = @JoinColumn(
-                    name = "place_id",
-                    foreignKey = @ForeignKey(name = "place_booking_place_id_fk")
-            ),
-            inverseJoinColumns = @JoinColumn (
-                    name = "reservation_id",
-                    foreignKey = @ForeignKey(name = "place_booking_reservation_id_fk")
-            )
+    private List<PlaceBooking> placeBookings= new ArrayList<>();
+    @OneToMany(
+            cascade = {CascadeType.PERSIST, CascadeType.REMOVE},
+            mappedBy = "place"
     )
-    private List<Reservation> reservations= new ArrayList<>();
-//    @OneToMany(
-//            cascade = {CascadeType.PERSIST, CascadeType.REMOVE},
-//            mappedBy = "place"
-//    )
-//    private List<AcitivitiesCard> acitivitiesCards = new ArrayList<>();
+    @JsonManagedReference
+    private List<ActivitiesCard> acitivitiesCards = new ArrayList<>();
     public Place(String name, String city, String postalCode, String street, String number, Integer maxGuestsNumber) {
         this.name = name;
         this.city = city;
@@ -93,7 +89,16 @@ public class Place {
         this.number = number;
         this.maxGuestsNumber = maxGuestsNumber;
     }
-
+    public Place(Place place){
+        System.out.println("Place copy constructor");
+        this.name = place.getName();
+        this.city = place.getCity();
+        this.postalCode = place.getPostalCode();
+        this.street = place.getStreet();
+        this.number = place.getNumber();
+        this.maxGuestsNumber = place.getMaxGuestsNumber();
+        addPlaceBooking(place.getPlaceBookings().get(0));
+    }
     @Override
     public String toString() {
         return "Place{" +
@@ -105,19 +110,21 @@ public class Place {
                 ", maxGuestsNumber=" + maxGuestsNumber +
                 '}';
     }
-
-    public void addReservation(Reservation reservation){
-        if(!reservations.contains(reservation)){
-            reservations.add(reservation);
+    public void addPlaceBooking(PlaceBooking placeBooking){
+        if(!placeBookings.contains(placeBooking)){
+            this.placeBookings.add(placeBooking);
         }
     }
-//    public void addActivitesCard(AcitivitiesCard acitivitiesCard){
-//        if(!acitivitiesCards.contains(acitivitiesCard)){
-//            acitivitiesCards.add(acitivitiesCard);
-//            acitivitiesCard.setPlace(this);
-//        }
-//    }
-//    public void removeActivitesCard(AcitivitiesCard acitivitiesCard){
-//        acitivitiesCards.remove(acitivitiesCard);
-//    }
+    public void removePlaceBooking(PlaceBooking placeBooking){
+        placeBookings.remove(placeBooking);
+    }
+    public void addActivitesCard(ActivitiesCard acitivitiesCard){
+        if(!acitivitiesCards.contains(acitivitiesCard)){
+            acitivitiesCards.add(acitivitiesCard);
+            acitivitiesCard.setPlace(this);
+        }
+    }
+    public void removeActivitesCard(ActivitiesCard acitivitiesCard){
+        acitivitiesCards.remove(acitivitiesCard);
+    }
 }

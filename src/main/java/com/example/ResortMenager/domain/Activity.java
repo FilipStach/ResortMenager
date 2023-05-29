@@ -1,5 +1,6 @@
 package com.example.ResortMenager.domain;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -56,24 +57,15 @@ public class Activity {
     )
     private Boolean ended = false;
     @ManyToOne
-    @JoinColumns({
-            @JoinColumn(
-                name = "reservation_id",
-                referencedColumnName = "place_id",
-                nullable = false,
-                foreignKey = @ForeignKey(
-                        name = "activity_reservation_id_fk"
-                )
-            ),
-                @JoinColumn(
-                        name = "place_id",
-                        referencedColumnName = "reservation_id",
-                        nullable = false,
-                        foreignKey = @ForeignKey(
-                                name = "activity_place_id_fk"
-                        )
-                )
-    })
+    @JsonBackReference
+    @JoinColumn(
+        name = "activitiesCard_id",
+        referencedColumnName = "id",
+        nullable = false,
+        foreignKey = @ForeignKey(
+                name = "activity_activitiesCard_id_fk"
+        )
+    )
     private ActivitiesCard activitiesCard;
 
     public Activity(Integer numberOfPeople, LocalDateTime startDate, LocalDateTime endDate, String name) {

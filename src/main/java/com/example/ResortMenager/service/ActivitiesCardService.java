@@ -15,4 +15,8 @@ public class ActivitiesCardService {
     public List<ActivitiesCard> getActivitiesCards(){
         return activitiesCardRepository.findAll();
     }
+
+    public void setActivitiesCard(ActivitiesCard activitiesCard){
+        activitiesCardRepository.save(activitiesCard);
+    }
 }

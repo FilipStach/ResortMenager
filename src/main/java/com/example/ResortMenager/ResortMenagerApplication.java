@@ -32,20 +32,30 @@ public class ResortMenagerApplication {
 			Reservation reservation = new Reservation(2,2,LocalDateTime.now().plusDays(21),
 					LocalDateTime.now().plusDays(28));
 			reservation.setGuest(guest);
-			place.addReservation(reservation);
+			System.out.println("PLAce id: " + place.getId());
+			System.out.println("Reservation id: " + reservation.getId());
+			PlaceBooking placeBooking = new PlaceBooking(place,
+					reservation);
+			place.addPlaceBooking(placeBooking);
+			reservation.addPlaceBooking(placeBooking);
+//			placeRepository.save(place);
 			ActivitiesCard activitiesCard = new ActivitiesCard(
-					new ActivitiesCardId(place.getId(), reservation.getId()),place,reservation,4);
-			Activity pool = new Activity(4, LocalDateTime.now(),
-					LocalDateTime.now().plusHours(1), "Pool");
-			pool.setActivitiesCard(activitiesCard);
+					place,reservation,5);
+			place.addActivitesCard(activitiesCard);
+			reservation.addActivitesCard(activitiesCard);
+//			placeRepository.save(place);
 			activitiesCardRepository.save(activitiesCard);
+//			System.out.println(activitiesCard.getPlace().getCity());
+			System.out.println(reservation.getId()) ;
 //			reservation.addActivitesCard(acitivitiesCard);
 //			place.addActivitesCard(acitivitiesCard);
 //			reservation.addPlace(place);
-			placeRepository.save(place);
-			reservationRepository.save(reservation);
-			List<Reservation> reservationList = reservationRepository.findAll();
-			System.out.println("Number of reservations: "+ reservationList.size());
+
+//			placeRepository.save(place);
+//			reservationRepository.save(reservation);
+//			List<Reservation> reservationList = reservationRepository.findAll();
+//			System.out.println(activitiesCard.getPlace().getCity());
+//			System.out.println("Number of reservations: "+ reservationList.size());
 		};
 	}
 

@@ -1,5 +1,7 @@
 package com.example.ResortMenager.domain;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -31,24 +33,24 @@ public class Reservation {
     )
     private Long id;
     @Column(
-            name = "number_of_adults",
-            nullable = false
+            name = "number_of_adults"
+//            nullable = false
     )
     private Integer numberOfAdults;
     @Column(
-            name = "number_of_kids",
-            nullable = false
+            name = "number_of_kids"
+//            nullable = false
     )
     private Integer numberOfKids;
     @Column(
             name = "arrival_date",
-            nullable = false,
+//            nullable = false,
             columnDefinition = "TIMESTAMP WITHOUT TIME ZONE"
     )
     private LocalDateTime arrivalDate;
     @Column(
             name = "departure_date",
-            nullable = false,
+//            nullable = false,
             columnDefinition = "TIMESTAMP WITHOUT TIME ZONE"
     )
     private LocalDateTime departureDate;
@@ -56,25 +58,29 @@ public class Reservation {
             cascade = {CascadeType.PERSIST, CascadeType.REMOVE},
             fetch = FetchType.EAGER
     )
+    @JsonBackReference
     @JoinColumn(
             name = "guest_id",
             updatable = false,
             referencedColumnName = "id",
-            nullable = false,
+            nullable = true,
             foreignKey = @ForeignKey( name = "reservation_guest_id_fk")
     )
     private Guest guest;
-//    @ManyToMany(
-//            cascade = {CascadeType.PERSIST, CascadeType.REMOVE},
-//            mappedBy = "reservations",
-//            fetch = FetchType.LAZY
-//    )
-//    private List<Place> places = new ArrayList<>();
-//    @OneToMany(
-//            cascade = {CascadeType.PERSIST, CascadeType.REMOVE},
-//            mappedBy = "reservation"
-//    )
-//    private List<AcitivitiesCard> acitivitiesCards = new ArrayList<>();
+    @JsonManagedReference("firstRef")
+    @OneToMany(
+            cascade = {CascadeType.PERSIST, CascadeType.REMOVE},
+            mappedBy = "reservation",
+            fetch = FetchType.LAZY
+
+    )
+    private List<PlaceBooking> placeBookings = new ArrayList<>();
+    @OneToMany(
+            cascade = {CascadeType.PERSIST, CascadeType.REMOVE},
+            mappedBy = "reservation"
+    )
+    @JsonManagedReference
+    private List<ActivitiesCard> acitivitiesCards = new ArrayList<>();
     public Reservation(Integer numberOfAdults, Integer numberOfKids, LocalDateTime arrivalDate, LocalDateTime departureDate) {
         this.numberOfAdults = numberOfAdults;
         this.numberOfKids = numberOfKids;
@@ -90,9 +96,17 @@ public class Reservation {
                 ", departureDate=" + departureDate +
                 '}';
     }
+
     public void setGuest(Guest guest){
         this.guest = guest;
-//        guest.addReservation(this);
+        guest.addReservation(this);
+    }
+    public Reservation(Reservation reservation){
+        System.out.println("Reservation copy constructor");
+        this.numberOfAdults = reservation.getNumberOfAdults();
+        this.numberOfKids = 5;
+        this.arrivalDate = reservation.getArrivalDate();
+        this.departureDate = reservation.getDepartureDate();
     }
 //    public void addPlace(Place place){
 //        if(!places.contains(place)){
@@ -104,13 +118,22 @@ public class Reservation {
 //        places.remove(place);
 //        place.getReservations().remove(this);
 //    }
-//    public void addActivitesCard(AcitivitiesCard acitivitiesCard){
-//        if(!acitivitiesCards.contains(acitivitiesCard)){
-//            acitivitiesCards.add(acitivitiesCard);
-//            acitivitiesCard.setReservation(this);
-//        }
-//    }
-//    public void removeActivitesCard(AcitivitiesCard acitivitiesCard){
-//            acitivitiesCards.remove(acitivitiesCard);
-//    }
+    public void addActivitesCard(ActivitiesCard acitivitiesCard){
+        if(!acitivitiesCards.contains(acitivitiesCard)){
+            acitivitiesCards.add(acitivitiesCard);
+            acitivitiesCard.setReservation(this);
+        }
+    }
+    public void removeActivitesCard(ActivitiesCard acitivitiesCard){
+            acitivitiesCards.remove(acitivitiesCard);
+    }
+    public void addPlaceBooking(PlaceBooking placeBooking){
+        if(!placeBookings.contains(placeBooking)){
+            placeBookings.add(placeBooking);
+            placeBooking.setReservation(this);
+        }
+    }
+    public void removePlaceBooking(PlaceBooking placeBooking){
+        placeBookings.remove(placeBooking);
+    }
 }
