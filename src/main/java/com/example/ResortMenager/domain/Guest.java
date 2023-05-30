@@ -75,6 +75,7 @@ public class Guest {
     public void addReservation(Reservation reservation){
         if(!this.reservations.contains(reservation)){
             this.reservations.add(reservation);
+            reservation.setGuest(this);
         }
     }
 }

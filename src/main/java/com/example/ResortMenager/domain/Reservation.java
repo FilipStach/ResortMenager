@@ -99,7 +99,6 @@ public class Reservation {
 
     public void setGuest(Guest guest){
         this.guest = guest;
-        guest.addReservation(this);
     }
     public Reservation(Reservation reservation){
         System.out.println("Reservation copy constructor");

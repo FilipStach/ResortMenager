@@ -17,8 +17,8 @@ public class GuestService {
         this.guestRepository = guestRepository;
     }
 
-    public List<Guest> getGuests(){
-        return guestRepository.findAll();
+    public List<Object[]> getGuests(){
+        return guestRepository.findAllGuestsWithReservations();
     }
     public void saveGuest(Guest guest){
         guestRepository.save(guest);

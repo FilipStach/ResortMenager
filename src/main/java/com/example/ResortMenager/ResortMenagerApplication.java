@@ -31,7 +31,11 @@ public class ResortMenagerApplication {
 					6);
 			Reservation reservation = new Reservation(2,2,LocalDateTime.now().plusDays(21),
 					LocalDateTime.now().plusDays(28));
-			reservation.setGuest(guest);
+			guest.addReservation(reservation);
+			guestRepository.save(new Guest("Filip", "Stach", "filip.stach00@gmail.com"));
+			guestRepository.save(new Guest("ANN", "mal", "sasa.aadd@gmail.com"));
+			guestRepository.save(new Guest("Filip", "Stach", "Janek.stach00@gmail.com"));
+			guestRepository.save(new Guest("JAN", "LLO", "LLL.stach00@gmail.com"));
 			System.out.println("PLAce id: " + place.getId());
 			System.out.println("Reservation id: " + reservation.getId());
 			PlaceBooking placeBooking = new PlaceBooking(place,
@@ -43,8 +47,9 @@ public class ResortMenagerApplication {
 					place,reservation,5);
 			place.addActivitesCard(activitiesCard);
 			reservation.addActivitesCard(activitiesCard);
+			reservationRepository.save(reservation);
 //			placeRepository.save(place);
-			activitiesCardRepository.save(activitiesCard);
+//			activitiesCardRepository.save(activitiesCard);
 //			System.out.println(activitiesCard.getPlace().getCity());
 			System.out.println(reservation.getId()) ;
 //			reservation.addActivitesCard(acitivitiesCard);
