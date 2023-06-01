@@ -20,6 +20,9 @@ public class GuestService {
     public List<Object[]> getGuests(){
         return guestRepository.findAllGuestsWithReservations();
     }
+    public List<Object[]> getGuestsWithOutReservation(){
+        return guestRepository.findAllGuestsWithOutReservations();
+    }
     public void saveGuest(Guest guest){
         guestRepository.save(guest);
     }

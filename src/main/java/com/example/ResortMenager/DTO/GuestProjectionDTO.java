@@ -7,7 +7,6 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
 @ToString
 public class GuestProjectionDTO {
     private Object id;
@@ -24,6 +23,19 @@ public class GuestProjectionDTO {
             this.firstName = (String) firstArray[2];
             this.lastName = (String) firstArray[3];
             this.reservationId = second;
+            System.out.println("Two arg cons");
+
+        }
+    }
+    public GuestProjectionDTO(Object first) {
+        if (first instanceof Object[]) {
+            Object[] firstArray = (Object[]) first;
+            this.id = firstArray[0];
+            this.email = (String) firstArray[1];
+            this.firstName = (String) firstArray[2];
+            this.lastName = (String) firstArray[3];
+            this.reservationId = null;
+            System.out.println("one arg cons");
         }
     }
 }

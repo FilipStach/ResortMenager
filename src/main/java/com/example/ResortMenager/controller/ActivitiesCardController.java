@@ -1,5 +1,6 @@
 package com.example.ResortMenager.controller;
 
+import com.example.ResortMenager.DTO.ActivitiesCardProjectionDTO;
 import com.example.ResortMenager.domain.ActivitiesCard;
 import com.example.ResortMenager.service.ActivitiesCardService;
 import lombok.AllArgsConstructor;
@@ -7,6 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @AllArgsConstructor
@@ -15,7 +17,12 @@ import java.util.List;
 public class ActivitiesCardController {
     private final ActivitiesCardService activitiesCardService;
     @GetMapping
-    public List<ActivitiesCard> getActivitiesCards(){
-        return activitiesCardService.getActivitiesCards();
+    public List<ActivitiesCardProjectionDTO> getActivitiesCards(){
+        List<ActivitiesCard> activitiesCards = activitiesCardService.getActivitiesCards();
+        List<ActivitiesCardProjectionDTO> activitiesCardProjectionDTOS = new ArrayList<>();
+        for (ActivitiesCard activitiesCard : activitiesCards){
+            activitiesCardProjectionDTOS.add(new ActivitiesCardProjectionDTO(activitiesCard));
+        }
+        return activitiesCardProjectionDTOS;
     }
 }

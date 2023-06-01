@@ -17,9 +17,17 @@ public class GuestController {
     @GetMapping
     public List<GuestProjectionDTO> getGuests(){
         List<Object[]> objects = guestService.getGuests();
+
         List<GuestProjectionDTO> guestProjectionDTOS= new ArrayList<>();
         for(Object[] objects1 : objects){
+            System.out.println(objects1.length);
             GuestProjectionDTO guestProjectionDTO = new GuestProjectionDTO(objects1[0],objects1[1]);
+            guestProjectionDTOS.add(guestProjectionDTO);
+        }
+        objects = guestService.getGuestsWithOutReservation();
+        for(Object[] objects1 : objects){
+            System.out.println(objects1.length);
+            GuestProjectionDTO guestProjectionDTO = new GuestProjectionDTO(objects1[0]);
             guestProjectionDTOS.add(guestProjectionDTO);
         }
         return guestProjectionDTOS;

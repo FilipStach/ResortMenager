@@ -13,4 +13,7 @@ public interface GuestRepository extends JpaRepository<Guest, Long> {
 //    List<Guest> findAllGuestsWithReservations();
     @Query(value = "SELECT g, r.id FROM guest g JOIN reservation r ON g.id = r.guest_id", nativeQuery = true)
     List<Object[]> findAllGuestsWithReservations();
+
+    @Query(value = "SELECT * FROM guest g WHERE g.id NOT IN (SELECT guest_id FROM reservation)", nativeQuery = true)
+    List<Object[]> findAllGuestsWithOutReservations();
 }
