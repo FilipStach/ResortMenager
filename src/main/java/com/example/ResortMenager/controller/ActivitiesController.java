@@ -23,7 +23,7 @@ public class ActivitiesController {
         List<Activity> activities = activitiesService.getActivities();
         List<ActivitiesProjectionDTO>activitiesProjectionDTOS = new ArrayList<>();
         for(Activity activity : activities){
-//            activitiesProjectionDTOS.add(new ActivitiesProjectionDTO(activity));
+            activitiesProjectionDTOS.add(new ActivitiesProjectionDTO(activity));
         }
         return activitiesProjectionDTOS;
     }

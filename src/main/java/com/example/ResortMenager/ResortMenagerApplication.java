@@ -46,6 +46,8 @@ public class ResortMenagerApplication {
 			ActivitiesCard activitiesCard = new ActivitiesCard(
 					place,reservation,5);
 			place.addActivitesCard(activitiesCard);
+			activitiesCard.addActivity(new Activity(2,LocalDateTime.now(),
+					LocalDateTime.now().plusDays(7),"cycling"));
 			reservation.addActivitesCard(activitiesCard);
 			reservationRepository.save(reservation);
 //			placeRepository.save(place);

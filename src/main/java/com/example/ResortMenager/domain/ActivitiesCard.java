@@ -71,6 +71,7 @@ public class ActivitiesCard {
         this.place = place;
         this.reservation = reservation;
         this.activitiesLeft = activitiesLeft;
+        this.activities = new ArrayList<>();
     }
 
     @Override
@@ -88,6 +89,12 @@ public class ActivitiesCard {
             mappedBy = "activitiesCard"
     )
     private List<Activity> activities;
+    public void addActivity(Activity activity){
+        if(!activities.contains(activity)){
+            activities.add(activity);
+            activity.setActivitiesCard(this);
+        }
+    }
     //        @EmbeddedId
 //    private ActivitiesCardId id;
 //    @ManyToOne(
