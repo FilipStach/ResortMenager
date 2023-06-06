@@ -3,6 +3,7 @@ package com.example.ResortMenager.domain;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -33,6 +34,7 @@ public class ActivitiesCard {
             updatable = false
     )
     private Long id;
+    @NotNull
     @ManyToOne(
             fetch = FetchType.LAZY,
             cascade = {CascadeType.ALL}
@@ -47,6 +49,7 @@ public class ActivitiesCard {
         foreignKey = @ForeignKey( name = "activites_card_place_id_fk")
     )
     private Place place;
+    @NotNull
     @JsonBackReference
     @ManyToOne(
             fetch = FetchType.LAZY,
@@ -67,10 +70,10 @@ public class ActivitiesCard {
     )
     private Integer activitiesLeft;
 
-    public ActivitiesCard(Place place, Reservation reservation, Integer activitiesLeft) {
+    public ActivitiesCard(Place place, Reservation reservation) {
         this.place = place;
         this.reservation = reservation;
-        this.activitiesLeft = activitiesLeft;
+        this.activitiesLeft = 5;
         this.activities = new ArrayList<>();
     }
 

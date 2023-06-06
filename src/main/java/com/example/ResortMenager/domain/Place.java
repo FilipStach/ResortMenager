@@ -3,6 +3,8 @@ package com.example.ResortMenager.domain;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -32,6 +34,7 @@ public class Place {
             updatable = false
     )
     private Long id;
+    @NotBlank
     @Column(
             name = "name",
 //            nullable = false,
@@ -39,30 +42,35 @@ public class Place {
             updatable = false
     )
     private String name;
+    @NotBlank
     @Column(
             name = "city",
 //            nullable = false,
             columnDefinition = "TEXT"
     )
     private String city;
+    @NotBlank
     @Column(
             name = "postal_code",
 //            nullable = false,
             columnDefinition = "TEXT"
     )
     private String postalCode;
+    @NotBlank
     @Column(
             name = "street",
 //            nullable = false,
             columnDefinition = "TEXT"
     )
     private String street;
+    @NotBlank
     @Column(
             name = "number",
 //            nullable = false,
             columnDefinition = "TEXT"
     )
     private String number;
+    @NotNull
     @Column(
             name = "max_guests_number",
 //            nullable = false,

@@ -1,7 +1,10 @@
 package com.example.ResortMenager.DTO;
 
+import com.example.ResortMenager.domain.Guest;
+import com.example.ResortMenager.domain.Reservation;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -9,33 +12,20 @@ import java.util.List;
 @NoArgsConstructor
 @ToString
 public class GuestProjectionDTO {
-    private Object id;
-    private Object email;
-    private Object firstName;
-    private Object lastName;
-    private Object reservationId;
+    private Long id;
+    private String email;
+    private String name;
+    private String surrname;
+    private List<Long> reservationIds = new ArrayList<>();
 
-    public GuestProjectionDTO(Object first, Object second) {
-        if (first instanceof Object[]) {
-            Object[] firstArray = (Object[]) first;
-            this.id = firstArray[0];
-            this.email = (String) firstArray[1];
-            this.firstName = (String) firstArray[2];
-            this.lastName = (String) firstArray[3];
-            this.reservationId = second;
-            System.out.println("Two arg cons");
-
-        }
-    }
-    public GuestProjectionDTO(Object first) {
-        if (first instanceof Object[]) {
-            Object[] firstArray = (Object[]) first;
-            this.id = firstArray[0];
-            this.email = (String) firstArray[1];
-            this.firstName = (String) firstArray[2];
-            this.lastName = (String) firstArray[3];
-            this.reservationId = null;
-            System.out.println("one arg cons");
-        }
+    public GuestProjectionDTO(Guest guest) {
+            List<Reservation>  reservations = guest.getReservations();
+            this.id = guest.getId();
+            this.email = guest.getEmail();
+            this.name = guest.getName();
+            this.surrname = guest.getSurrname();
+            for (Reservation reservation : reservations){
+                reservationIds.add(reservation.getId());
+            }
     }
 }

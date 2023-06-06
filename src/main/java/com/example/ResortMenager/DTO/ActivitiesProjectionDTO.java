@@ -20,6 +20,8 @@ import java.time.LocalDateTime;
 @ToString
 public class ActivitiesProjectionDTO {
     private Long id;
+    private Integer numberOfPeople;
+    private LocalDateTime startDate;
     private LocalDateTime endDate;
     private String name;
     private Boolean ended = false;
@@ -27,6 +29,8 @@ public class ActivitiesProjectionDTO {
 
     public ActivitiesProjectionDTO(Activity activity) {
         this.id = activity.getId();
+        this.numberOfPeople = activity.getNumberOfPeople();
+        this.startDate = activity.getStartDate();
         this.endDate = activity.getEndDate();
         this.name = activity.getName();
         this.ended = activity.getEnded();

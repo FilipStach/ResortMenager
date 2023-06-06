@@ -2,6 +2,8 @@ package com.example.ResortMenager.domain;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -29,23 +31,27 @@ public class Activity {
             updatable = false
     )
     private Long id;
+    @NotNull
     @Column(
             name = "number_of_people",
             nullable = false
     )
     private Integer numberOfPeople;
+    @NotNull
     @Column(
             name = "start_date",
             nullable = false,
             columnDefinition = "TIMESTAMP WITHOUT TIME ZONE"
     )
     private LocalDateTime startDate;
+    @NotNull
     @Column(
             name = "end_date",
             nullable = false,
             columnDefinition = "TIMESTAMP WITHOUT TIME ZONE"
     )
     private LocalDateTime endDate;
+    @NotBlank
     @Column(
             name = "name",
             nullable = false,
@@ -56,6 +62,7 @@ public class Activity {
             name = "ended"
     )
     private Boolean ended = false;
+    @NotNull
     @ManyToOne
     @JsonBackReference
     @JoinColumn(
@@ -74,7 +81,6 @@ public class Activity {
         this.endDate = endDate;
         this.name = name;
     }
-
     @Override
     public String toString() {
         return "Activity{" +

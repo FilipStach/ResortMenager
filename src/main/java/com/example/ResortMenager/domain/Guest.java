@@ -2,6 +2,7 @@ package com.example.ResortMenager.domain;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -31,18 +32,21 @@ public class Guest {
             updatable = false
     )
     private Long id;
+    @NotBlank
     @Column(
             name = "name",
             nullable = false,
             columnDefinition = "TEXT"
     )
     private String name;
+    @NotBlank
     @Column(
             name = "surrname",
             nullable = false,
             columnDefinition = "TEXT"
     )
     private String surrname;
+    @NotBlank
     @Column(
             name = "email",
             nullable = false,

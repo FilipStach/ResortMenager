@@ -2,6 +2,7 @@ package com.example.ResortMenager.domain;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,8 +17,10 @@ import java.util.Objects;
 @NoArgsConstructor
 @Embeddable
 public class ActivitiesCardId implements Serializable {
+    @NotBlank
     @Column( name = "reservation_id")
     private Long reservationId;
+    @NotBlank
     @Column( name = "place_id")
     private Long placeId;
 

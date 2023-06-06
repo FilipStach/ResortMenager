@@ -1,9 +1,13 @@
 package com.example.ResortMenager.controller;
 
+import com.example.ResortMenager.DTO.GuestDTO;
 import com.example.ResortMenager.DTO.GuestProjectionDTO;
+import com.example.ResortMenager.DTO.ReservationDTO;
 import com.example.ResortMenager.domain.Guest;
+import com.example.ResortMenager.domain.Reservation;
 import com.example.ResortMenager.service.GuestService;
 import lombok.AllArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -16,25 +20,47 @@ public class GuestController {
     private final GuestService guestService;
     @GetMapping
     public List<GuestProjectionDTO> getGuests(){
-        List<Object[]> objects = guestService.getGuests();
+        List<Guest> guests = guestService.getGuests();
 
         List<GuestProjectionDTO> guestProjectionDTOS= new ArrayList<>();
-        for(Object[] objects1 : objects){
-            System.out.println(objects1.length);
-            GuestProjectionDTO guestProjectionDTO = new GuestProjectionDTO(objects1[0],objects1[1]);
-            guestProjectionDTOS.add(guestProjectionDTO);
-        }
-        objects = guestService.getGuestsWithOutReservation();
-        for(Object[] objects1 : objects){
-            System.out.println(objects1.length);
-            GuestProjectionDTO guestProjectionDTO = new GuestProjectionDTO(objects1[0]);
+        for(Guest guest : guests){
+            GuestProjectionDTO guestProjectionDTO = new GuestProjectionDTO(guest);
             guestProjectionDTOS.add(guestProjectionDTO);
         }
         return guestProjectionDTOS;
     }
+    @GetMapping(path = "{guestId}")
+    public GuestProjectionDTO getGuest(@PathVariable ("guestId") long guestId){
+        Guest guest = guestService.getGuest(guestId);
+        return new GuestProjectionDTO(guest);
+    }
+
+//    @GetMapping("/{id}")
+//    public ResponseEntity<Guest> getGuestById(@PathVariable("id") Long id) {
+//        Guest guest = guestService.findByd(id)
+//                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Guest not found"));
+//        return new ResponseEntity<>(guest, HttpStatus.OK);
+//    }
     @PostMapping
-    public void createNewGuest(@RequestBody Guest guest){
-        System.out.println(guest);
-//        guestService.saveGuest(guest);
+    public void addGuest(@RequestBody GuestDTO guestDTO) {
+        Guest guest = new Guest(guestDTO.getName(), guestDTO.getSurrname(), guestDTO.getEmail());
+
+        guestService.saveGuest(guest);
+    }
+    @PutMapping(path = "{guestId}")
+    public void updateGuest(@RequestBody GuestDTO guestDTO,@PathVariable ("guestId") long guestId) {
+        List<Guest> guests = guestService.getGuests();
+        for(Guest guest : guests){
+            if(guest.getId() == guestId){
+                guest.setName(guestDTO.getName());
+                guest.setSurrname(guestDTO.getSurrname());
+                guest.setEmail(guestDTO.getEmail());
+                guestService.saveGuest(guest);
+            }
+        }
+    }
+    @DeleteMapping(path = "{guestId}")
+    public void deleteGuest(@PathVariable ("guestId") Long guestId){
+        guestService.deleteGuest(guestId);
     }
 }
