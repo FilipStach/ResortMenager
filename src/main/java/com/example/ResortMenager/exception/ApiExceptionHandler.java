@@ -17,4 +17,19 @@ public class ApiExceptionHandler {
         ApiException apiException = new ApiException(e.getMessage(),e, HttpStatus.BAD_REQUEST, ZonedDateTime.now());
         return new ResponseEntity<>(apiException, HttpStatus.BAD_REQUEST);
     }
+    @ExceptionHandler(value = NotFoundException.class)
+    public ResponseEntity<Object> handleNotFoundException(
+            NotFoundException e
+    ){
+        ApiException apiException = new ApiException(e.getMessage(),e, HttpStatus.NOT_FOUND, ZonedDateTime.now());
+        return new ResponseEntity<>(apiException, HttpStatus.NOT_FOUND);
+    }
+    @ExceptionHandler(value = InternalServerError.class)
+    public ResponseEntity<Object> handleInternalServerError(
+            InternalServerError e
+    ){
+        ApiException apiException = new ApiException(e.getMessage(),e, HttpStatus.INTERNAL_SERVER_ERROR,
+                ZonedDateTime.now());
+        return new ResponseEntity<>(apiException, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 }

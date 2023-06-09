@@ -2,12 +2,17 @@ package com.example.ResortMenager.controller;
 
 import com.example.ResortMenager.DTO.*;
 import com.example.ResortMenager.domain.*;
+import com.example.ResortMenager.exception.ApiRequestException;
 import com.example.ResortMenager.service.GuestService;
 import com.example.ResortMenager.service.PlaceService;
 import com.example.ResortMenager.service.ReservationService;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -15,55 +20,65 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/reservations")
+@AllArgsConstructor
 public class ReservationController {
     private final ReservationService reservationService;
     private final PlaceService placeService;
     private final GuestService guestService;
 
-    @Autowired
-    public ReservationController(ReservationService reservationService, PlaceService placeService, GuestService guestService) {
-        this.reservationService = reservationService;
-        this.placeService = placeService;
-        this.guestService = guestService;
-    }
-
     @GetMapping
-    List<ReservationProjectionDTO> getReservations(){
+    public ResponseEntity<List<ReservationProjectionDTO>> getReservations(){
         List<Reservation> reservations = reservationService.getReservations();
         List<ReservationProjectionDTO> reservationProjectionDTOS = new ArrayList<>();
         for(Reservation reservation : reservations){
             reservationProjectionDTOS.add(new ReservationProjectionDTO(reservation));
         }
-        return reservationProjectionDTOS;
+        return new ResponseEntity<>(reservationProjectionDTOS, HttpStatus.OK);
     }
     @GetMapping(path = "{reservationId}")
-    public ReservationProjectionDTO getReservation(@PathVariable("reservationId") Long reservationId){
+    public ResponseEntity<ReservationProjectionDTO> getReservation(@PathVariable("reservationId") Long reservationId){
         List<Reservation> reservations = reservationService.getReservations();
         for(Reservation reservation : reservations){
             if(reservation.getId() == reservationId)
-                return new ReservationProjectionDTO(reservation);
+                return new ResponseEntity<>(new ReservationProjectionDTO(reservation), HttpStatus.OK);
         }
         return null;
     }
     @PostMapping
-    public void addReservation(@RequestBody ReservationDTO reservationDTO) {
+    public ResponseEntity<HttpStatus> addReservation(@Valid @RequestBody ReservationDTO reservationDTO, BindingResult result) {
+        if (result.hasErrors()) {
+            StringBuilder errorMessage = new StringBuilder();
+            for (FieldError error : result.getFieldErrors()) {
+                errorMessage.append(error.getField()).append(": ").append(error.getDefaultMessage()).append("; ");
+            }
+            for (ObjectError error : result.getGlobalErrors()) {
+                errorMessage.append(error.getObjectName()).append(": ").append(error.getDefaultMessage()).append("; ");
+            }
+            throw new ApiRequestException(errorMessage.toString());
+        }
         Reservation reservation = new Reservation(reservationDTO.getNumberOfAdults(),reservationDTO.getNumberOfKids(),
                 reservationDTO.getArrivalDate(),reservationDTO.getDepartureDate());
-        System.out.println("Post RESERVATION");
-        System.out.println(reservationDTO.getPlaceId() + " " + reservationDTO.getGuestId());
-        System.out.println("Post RESERVATION2");
         PlaceBooking placeBooking = new PlaceBooking(placeService.findById(reservationDTO.getPlaceId()), reservation);
-        reservation.setGuest(guestService.getGuest(reservationDTO.getGuestId()));
+        reservation.setGuest(guestService.findById(reservationDTO.getGuestId()));
         reservation.addPlaceBooking(placeBooking);
-        ActivitiesCard acitivitiesCard = new ActivitiesCard(placeBooking.getPlace(), reservation);
-        reservation.addActivitesCard(acitivitiesCard);
+        ActivitiesCard activitiesCard = new ActivitiesCard(placeBooking.getPlace(), reservation);
+        reservation.addActivitesCard(activitiesCard);
         placeBooking.getPlace().addPlaceBooking(placeBooking);
-        placeBooking.getPlace().addActivitesCard(acitivitiesCard);
-        guestService.getGuest(reservationDTO.getGuestId());
+        placeBooking.getPlace().addActivitesCard(activitiesCard);
+        guestService.findById(reservationDTO.getGuestId());
         reservationService.saveReservation(reservation);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
     @PutMapping(path = "{reservationId}")
-    public void updateReservation(@RequestBody ReservationDTO reservationDTO, @PathVariable ("reservationId") Long reservationId) {
+    public ResponseEntity<HttpStatus> updateReservation(@Valid @RequestBody ReservationDTO reservationDTO, BindingResult result,
+                                  @PathVariable ("reservationId") Long reservationId) {
+        if (result.hasErrors()) {
+            StringBuilder errorMessage = new StringBuilder();
+            for (FieldError error : result.getFieldErrors()) {
+                errorMessage.append(error.getField()).append(": ").append(error.getDefaultMessage()).append("; ");
+            }
+            throw new ApiRequestException(errorMessage.toString());
+        }
         List<Reservation> reservations = reservationService.getReservations();
         for(Reservation reservation : reservations){
             if(reservation.getId() == reservationId){
@@ -74,9 +89,11 @@ public class ReservationController {
                 reservationService.saveReservation(reservation);
             }
         }
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
     @DeleteMapping(path = "{reservationId}")
-    public void deleteReservation(@PathVariable("reservationId") Long reservationId){
+    public ResponseEntity<HttpStatus> deleteReservation(@PathVariable("reservationId") Long reservationId){
         reservationService.deleteReservation(reservationId);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

@@ -10,7 +10,12 @@ import com.example.ResortMenager.domain.Reservation;
 import com.example.ResortMenager.service.ActivitiesCardService;
 import com.example.ResortMenager.service.PlaceService;
 import com.example.ResortMenager.service.ReservationService;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -25,34 +30,39 @@ public class ActivitiesCardController {
     private final ReservationService reservationService;
 
     @GetMapping
-    public List<ActivitiesCardProjectionDTO> getActivitiesCards(){
+    public ResponseEntity<List<ActivitiesCardProjectionDTO>> getActivitiesCards(){
         List<ActivitiesCard> activitiesCards = activitiesCardService.getActivitiesCards();
         List<ActivitiesCardProjectionDTO> activitiesCardProjectionDTOS = new ArrayList<>();
         for (ActivitiesCard activitiesCard : activitiesCards){
             activitiesCardProjectionDTOS.add(new ActivitiesCardProjectionDTO(activitiesCard));
         }
-        return activitiesCardProjectionDTOS;
+        return new ResponseEntity<>(activitiesCardProjectionDTOS, HttpStatus.OK);
     }
     @GetMapping(path = "{activitiesCardsId}")
-    public ActivitiesCardProjectionDTO getActivitiesCard(@PathVariable("activitiesCardsId") Long activitiesCardsId){
-        List<ActivitiesCard> activitiesCards = activitiesCardService.getActivitiesCards();
-        for(ActivitiesCard activitiesCard : activitiesCards){
-            if(activitiesCard.getId() == activitiesCardsId)
-                return new ActivitiesCardProjectionDTO(activitiesCard);
-        }
-        return null;
+    public ResponseEntity<ActivitiesCardProjectionDTO> getActivitiesCard(
+            @PathVariable("activitiesCardsId") Long activitiesCardsId){
+                ActivitiesCard activitiesCard = activitiesCardService.findById(activitiesCardsId);
+        return new ResponseEntity<>(new ActivitiesCardProjectionDTO(activitiesCard), HttpStatus.OK);
     }
     @PutMapping(path = "{activitiesCardId}")
-    public void updateActivitiesCard(@PathVariable("activitiesCardId") Long activitiesCardId,
-                                     @RequestBody ActivitiesCardDTO activitiesCardDTO){
+    public ResponseEntity<HttpStatus> updateActivitiesCard(@Valid @PathVariable("activitiesCardId") Long activitiesCardId,
+                                     BindingResult result, @RequestBody ActivitiesCardDTO activitiesCardDTO){
+        if (result.hasErrors()){
+            StringBuilder errorMessage = new StringBuilder();
+            for(FieldError error : result.getFieldErrors()){
+                errorMessage.append(error.getField()).append(": ").append(error.getDefaultMessage()).append("; ");
+            }
+        }
         List<ActivitiesCard> activitiesCards = activitiesCardService.getActivitiesCards();
         for(ActivitiesCard activitiesCard : activitiesCards){
             activitiesCard.setActivitiesLeft(activitiesCardDTO.getActivitiesLeft());
             activitiesCardService.save(activitiesCard);
         }
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
     @DeleteMapping(path = "{activitiesCardId}")
-    public void deleteActivitiesCard(@PathVariable("activitiesCardId") Long activitiesCardId){
+    public ResponseEntity<HttpStatus> deleteActivitiesCard(@PathVariable("activitiesCardId") Long activitiesCardId){
         activitiesCardService.deleteActivitiesCard(activitiesCardId);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

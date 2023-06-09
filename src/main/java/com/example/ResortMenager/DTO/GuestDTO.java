@@ -16,11 +16,11 @@ import java.util.List;
 @Setter
 public class GuestDTO {
 
-    @NotBlank
+    @NotBlank(message = "Guest name cant be blank")
     private String name;
-    @NotBlank
+    @NotBlank(message = "Guest surrname cant be blank")
     private String surrname;
-    @Email
-    @NotBlank
+    @Email(message = "Wrong email format in guest email")
+    @NotBlank(message = "Guest email cant be blank")
     private String email;
 }

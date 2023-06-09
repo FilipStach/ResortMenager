@@ -1,10 +1,8 @@
 package com.example.ResortMenager.domain;
 
-import com.example.ResortMenager.DTO.ReservationDTO;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -35,29 +33,25 @@ public class Reservation {
             updatable = false
     )
     private Long id;
-    @NotNull
     @Column(
-            name = "number_of_adults"
-//            nullable = false
+            name = "number_of_adults",
+            nullable = false
     )
     private Integer numberOfAdults;
-    @NotNull
     @Column(
-            name = "number_of_kids"
-//            nullable = false
+            name = "number_of_kids",
+            nullable = false
     )
     private Integer numberOfKids;
-    @NotNull
     @Column(
             name = "arrival_date",
-//            nullable = false,
+            nullable = false,
             columnDefinition = "TIMESTAMP WITHOUT TIME ZONE"
     )
     private LocalDateTime arrivalDate;
-    @NotNull
     @Column(
             name = "departure_date",
-//            nullable = false,
+            nullable = false,
             columnDefinition = "TIMESTAMP WITHOUT TIME ZONE"
     )
     private LocalDateTime departureDate;
@@ -94,15 +88,6 @@ public class Reservation {
         this.arrivalDate = arrivalDate;
         this.departureDate = departureDate;
     }
-//    public Reservation(ReservationDTO reservationDTO){
-//        this.numberOfAdults = reservationDTO.getNumberOfAdults();
-//        this.numberOfKids = reservationDTO.getNumberOfKids();
-//        this.arrivalDate = reservationDTO.getArrivalDate();
-//        this.departureDate = reservationDTO.getDepartureDate();
-//        this.guest = reservationDTO.getGuest();
-//        this.placeBookings.addAll(reservationDTO.getPlaceBookings());
-//        this.acitivitiesCards.addAll(reservationDTO.getAcitivitiesCards());
-//    }
     @Override
     public String toString() {
         return "Reservation{" +
@@ -112,7 +97,6 @@ public class Reservation {
                 ", departureDate=" + departureDate +
                 '}';
     }
-
     public void setGuest(Guest guest){
         this.guest = guest;
     }
@@ -123,16 +107,6 @@ public class Reservation {
         this.arrivalDate = reservation.getArrivalDate();
         this.departureDate = reservation.getDepartureDate();
     }
-//    public void addPlace(Place place){
-//        if(!places.contains(place)){
-//            places.add(place);
-//            place.addReservation(this);
-//        }
-//    }
-//    public void removePlace(Place place){
-//        places.remove(place);
-//        place.getReservations().remove(this);
-//    }
     public void addActivitesCard(ActivitiesCard acitivitiesCard){
         if(!acitivitiesCards.contains(acitivitiesCard)){
             acitivitiesCards.add(acitivitiesCard);

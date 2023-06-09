@@ -1,15 +1,12 @@
 package com.example.ResortMenager.service;
 
 import com.example.ResortMenager.domain.Guest;
-import com.example.ResortMenager.domain.Place;
 import com.example.ResortMenager.domain.Reservation;
+import com.example.ResortMenager.exception.InternalServerError;
 import com.example.ResortMenager.exception.NotFoundException;
 import com.example.ResortMenager.repository.GuestRepository;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -20,28 +17,39 @@ public class GuestService {
     private final ReservationService reservationService;
 
     public List<Guest> getGuests(){
-        return guestRepository.findAll();
+        try {
+            return guestRepository.findAll();
+        } catch (Exception e){
+            throw new InternalServerError("Server error", e);
+        }
     }
-    public Guest getGuest(Long id){
-        Guest guest = guestRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Guest with id "+ id + " not found"));
-        System.out.println("GUEST: "+guest);
-        return guest;
-
+    public Guest findById(Long id){
+        try {
+            Guest guest = guestRepository.findById(id)
+                    .orElseThrow(() -> new NotFoundException("Guest with id " + id + " not found"));
+            return guest;
+        } catch (Exception e){
+            throw new InternalServerError("Server error", e);
+        }
     }
     public void saveGuest(Guest guest){
-        guestRepository.save(guest);
-    }
-    public void updateGuest(Guest guest){
-        guestRepository.save(guest);
-    }
-    public void deleteGuest(Long guestId){
-        Guest guest = guestRepository.findById(guestId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Guest not found"));
-        List<Reservation> reservations = guest.getReservations();
-        for(Reservation reservation : reservations){
-            reservationService.deleteReservation(reservation.getId());
+        try {
+            guestRepository.save(guest);
+        } catch (Exception e){
+            throw new InternalServerError("Server error", e);
         }
-        guestRepository.delete(guest);
+    }
+    public void deleteGuest(Long guestId) {
+        try {
+            Guest guest = guestRepository.findById(guestId)
+                    .orElseThrow(() -> new NotFoundException("Guest with id " + guestId + " not found"));
+            List<Reservation> reservations = guest.getReservations();
+            for (Reservation reservation : reservations) {
+                reservationService.deleteReservation(reservation.getId());
+            }
+            guestRepository.delete(guest);
+        } catch (Exception e) {
+            throw new InternalServerError("Server error", e);
+        }
     }
 }
