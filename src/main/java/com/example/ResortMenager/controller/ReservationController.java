@@ -10,6 +10,9 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
@@ -17,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/reservations")
@@ -25,27 +29,49 @@ public class ReservationController {
     private final ReservationService reservationService;
     private final PlaceService placeService;
     private final GuestService guestService;
-
+    public List<String> getRoles(@AuthenticationPrincipal Jwt principal){
+        Map<String,Object> objectMap = principal.getClaims();
+        try {
+            Map<String,Object> object = (Map<String, java.lang.Object>) objectMap.get("resource_access");
+            Map<String,Object> elements = (Map<String, java.lang.Object>) object.get("resortManager-rest-api");
+            List<String> roles = (List<String>) elements.get("roles");
+            return roles;
+        } catch (Exception e){
+            return null;
+        }
+    }
     @GetMapping
-    public ResponseEntity<List<ReservationProjectionDTO>> getReservations(){
+    @PreAuthorize("hasRole('client_admin') or hasRole('client_guest')")
+    public ResponseEntity<List<ReservationProjectionDTO>> getReservations(@AuthenticationPrincipal Jwt principal){
         List<Reservation> reservations = reservationService.getReservations();
         List<ReservationProjectionDTO> reservationProjectionDTOS = new ArrayList<>();
         for(Reservation reservation : reservations){
-            reservationProjectionDTOS.add(new ReservationProjectionDTO(reservation));
+            if(reservation.getGuest().getEmail().equals(principal.getClaims().get("email")) ||
+                    getRoles(principal).contains("client_admin")){
+                reservationProjectionDTOS.add(new ReservationProjectionDTO(reservation));
+            }
+        }
+        if(reservationProjectionDTOS.size()==0){
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
         return new ResponseEntity<>(reservationProjectionDTOS, HttpStatus.OK);
     }
     @GetMapping(path = "{reservationId}")
-    public ResponseEntity<ReservationProjectionDTO> getReservation(@PathVariable("reservationId") Long reservationId){
-        List<Reservation> reservations = reservationService.getReservations();
-        for(Reservation reservation : reservations){
-            if(reservation.getId() == reservationId)
-                return new ResponseEntity<>(new ReservationProjectionDTO(reservation), HttpStatus.OK);
+    @PreAuthorize("hasRole('client_admin') or hasRole('client_guest')")
+    public ResponseEntity<ReservationProjectionDTO> getReservation(@AuthenticationPrincipal Jwt principal,
+                                                                   @PathVariable("reservationId") Long reservationId){
+
+        Reservation reservation = reservationService.findById(reservationId);
+        if(reservation.getGuest().getEmail().equals(principal.getClaims().get("email")) ||
+                getRoles(principal).contains("client_admin")){
+            return new ResponseEntity<>(new ReservationProjectionDTO(reservation), HttpStatus.OK);
         }
-        return null;
+        return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
     }
     @PostMapping
-    public ResponseEntity<HttpStatus> addReservation(@Valid @RequestBody ReservationDTO reservationDTO, BindingResult result) {
+    @PreAuthorize("hasRole('client_admin')")
+    public ResponseEntity<HttpStatus> addReservation(@Valid @RequestBody ReservationDTO reservationDTO,
+                                                     BindingResult result) {
         if (result.hasErrors()) {
             StringBuilder errorMessage = new StringBuilder();
             for (FieldError error : result.getFieldErrors()) {
@@ -70,8 +96,10 @@ public class ReservationController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
     @PutMapping(path = "{reservationId}")
-    public ResponseEntity<HttpStatus> updateReservation(@Valid @RequestBody ReservationDTO reservationDTO, BindingResult result,
-                                  @PathVariable ("reservationId") Long reservationId) {
+    @PreAuthorize("hasRole('client_admin')")
+    public ResponseEntity<HttpStatus> updateReservation(@Valid @RequestBody ReservationDTO reservationDTO,
+                                                        BindingResult result,
+                                                        @PathVariable ("reservationId") Long reservationId) {
         if (result.hasErrors()) {
             StringBuilder errorMessage = new StringBuilder();
             for (FieldError error : result.getFieldErrors()) {
@@ -92,6 +120,7 @@ public class ReservationController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
     @DeleteMapping(path = "{reservationId}")
+    @PreAuthorize("hasRole('client_admin')")
     public ResponseEntity<HttpStatus> deleteReservation(@PathVariable("reservationId") Long reservationId){
         reservationService.deleteReservation(reservationId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);

@@ -50,7 +50,8 @@ public class Guest {
     @Column(
             name = "email",
             nullable = false,
-            columnDefinition = "TEXT"
+            columnDefinition = "TEXT",
+            unique = true
     )
     private String email;
     @JsonManagedReference("firstRef")

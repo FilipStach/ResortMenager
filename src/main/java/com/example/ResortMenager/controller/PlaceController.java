@@ -14,6 +14,7 @@ import lombok.AllArgsConstructor;
 import org.apache.tomcat.util.http.parser.HttpParser;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
@@ -45,6 +46,7 @@ public class PlaceController {
         return null;
     }
     @PostMapping
+    @PreAuthorize("hasRole('client_admin')")
     public ResponseEntity<HttpStatus> addPlace(@Valid @RequestBody PlaceDTO placeDTO, BindingResult result) {
         if(result.hasErrors()){
             StringBuilder errorMessage = new StringBuilder();
@@ -60,6 +62,7 @@ public class PlaceController {
 
     }
     @PutMapping(path = "{placeId}")
+    @PreAuthorize("hasRole('client_admin')")
     public ResponseEntity<HttpStatus> updatePlace(@Valid @RequestBody PlaceDTO placeDTO,BindingResult result,
                             @PathVariable ("placeId") long placeId) {
         if(result.hasErrors()){
@@ -83,6 +86,7 @@ public class PlaceController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
     @DeleteMapping(path = "{placeId}")
+    @PreAuthorize("hasRole('client_admin')")
     public ResponseEntity<HttpStatus> deletePlace(@PathVariable ("placeId") Long placeId ){
         placeService.deletePlace(placeId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);

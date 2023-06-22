@@ -31,25 +31,36 @@ public class ResortMenagerApplication {
 					6);
 			Reservation reservation = new Reservation(2,2,LocalDateTime.now().plusDays(21),
 					LocalDateTime.now().plusDays(28));
+			Reservation reservation2 = new Reservation(2,2,LocalDateTime.now().plusDays(11),
+					LocalDateTime.now().plusDays(18));
 			guest.addReservation(reservation);
-			guestRepository.save(new Guest("Filip", "Stach", "filip.stach00@gmail.com"));
-			guestRepository.save(new Guest("ANN", "mal", "sasa.aadd@gmail.com"));
-			guestRepository.save(new Guest("Filip", "Stach", "Janek.stach00@gmail.com"));
-			guestRepository.save(new Guest("JAN", "LLO", "LLL.stach00@gmail.com"));
+			Guest guest2 = new Guest("jan", "llo", "lll.stach00@gmail.com");
+			guest2.addReservation(reservation2);
+			guestRepository.save(new Guest("ann", "mal", "sasa.aadd@gmail.com"));
+			guestRepository.save(new Guest("filip", "stach", "Janek.stach00@gmail.com"));
 			System.out.println("PLAce id: " + place.getId());
 			System.out.println("Reservation id: " + reservation.getId());
 			PlaceBooking placeBooking = new PlaceBooking(place,
 					reservation);
+			PlaceBooking placeBooking2 = new PlaceBooking(place,
+					reservation2);
 			place.addPlaceBooking(placeBooking);
+			place.addPlaceBooking(placeBooking2);
 			reservation.addPlaceBooking(placeBooking);
+			reservation2.addPlaceBooking(placeBooking2);
 //			placeRepository.save(place);
 			ActivitiesCard activitiesCard = new ActivitiesCard(
 					place,reservation);
+			ActivitiesCard activitiesCard2 = new ActivitiesCard(
+					place,reservation2);
 			place.addActivitesCard(activitiesCard);
+			place.addActivitesCard(activitiesCard2);
 			activitiesCard.addActivity(new Activity(2,LocalDateTime.now(),
 					LocalDateTime.now().plusDays(7),"cycling"));
 			reservation.addActivitesCard(activitiesCard);
+			reservation2.addActivitesCard(activitiesCard2);
 			reservationRepository.save(reservation);
+			reservationRepository.save(reservation2);
 //			placeRepository.save(place);
 //			activitiesCardRepository.save(activitiesCard);
 //			System.out.println(activitiesCard.getPlace().getCity());
