@@ -23,4 +23,6 @@ public class GuestDTO {
     @Email(message = "Wrong email format in guest email")
     @NotBlank(message = "Guest email cant be blank")
     private String email;
+    @NotBlank(message = "Guest password cant be blank")
+    private String password;
 }

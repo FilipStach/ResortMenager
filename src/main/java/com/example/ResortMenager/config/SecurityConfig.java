@@ -1,6 +1,7 @@
 package com.example.ResortMenager.config;
 
 import lombok.*;
+import org.keycloak.admin.client.Keycloak;
 import org.springframework.boot.autoconfigure.security.oauth2.resource.OAuth2ResourceServerProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -39,5 +40,14 @@ public class SecurityConfig {
                         jwt -> jwt.jwtAuthenticationConverter(jwtAuthConverter)))
                 .httpBasic(Customizer.withDefaults())
                 .build();
+    }
+    @Bean
+    public Keycloak keycloakInstance(){
+        return  Keycloak.getInstance(
+                "http://localhost:8080", // url keycloak
+                "resortManagerKeyCloak", // realm
+                "1", // username
+                "filip1", // password
+                "resortManager-rest-api"); // client id ;
     }
 }

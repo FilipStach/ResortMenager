@@ -47,7 +47,7 @@ public class PlaceController {
     }
     @PostMapping
     @PreAuthorize("hasRole('client_admin')")
-    public ResponseEntity<HttpStatus> addPlace(@Valid @RequestBody PlaceDTO placeDTO, BindingResult result) {
+    public ResponseEntity<?> addPlace(@Valid @RequestBody PlaceDTO placeDTO, BindingResult result) {
         if(result.hasErrors()){
             StringBuilder errorMessage = new StringBuilder();
             for (FieldError error : result.getFieldErrors()) {
@@ -58,7 +58,7 @@ public class PlaceController {
         Place place = new Place(placeDTO.getName(), placeDTO.getCity(),placeDTO.getPostalCode(),placeDTO.getStreet(),
                 placeDTO.getNumber(),placeDTO.getMaxGuestsNumber());
         placeService.savePlace(place);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return ResponseEntity.ok("User created successfully");
 
     }
     @PutMapping(path = "{placeId}")
@@ -83,7 +83,7 @@ public class PlaceController {
                 placeService.savePlace(place);
             }
         }
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
     @DeleteMapping(path = "{placeId}")
     @PreAuthorize("hasRole('client_admin')")
